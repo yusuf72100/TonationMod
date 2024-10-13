@@ -6,8 +6,8 @@ import net.minecraft.util.ResourceLocation;
 
 public class WelcomeOverlay extends GuiScreen {
     private final ResourceLocation background = new ResourceLocation(tonation.MODID, "textures/guibvn.png");
-    private final int xSize = 200;
-    private final int ySize = 200;
+    private final int xSize = 400;
+    private final int ySize = 250;
     private int guiLeft;
     private int guiTop;
 
@@ -18,7 +18,10 @@ public class WelcomeOverlay extends GuiScreen {
 
     public void drawScreen(int mouseX, int mouseY, float partialTicks) {
         // Afficher le fond par défaut
-        drawBackgroundImage();
+        //drawBackgroundImage();
+        drawDefaultBackground();
+        mc.getTextureManager().bindTexture(background);
+        drawModalRectWithCustomSizedTexture(guiLeft, guiTop, 0, 0, xSize, ySize, xSize, ySize);
         super.drawScreen(mouseX, mouseY, partialTicks);
     }
 
@@ -27,7 +30,6 @@ public class WelcomeOverlay extends GuiScreen {
         GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
         mc.getTextureManager().bindTexture(background);
         drawTexturedModalRect(guiLeft, guiTop, 0, 0, xSize, ySize);
-
         GlStateManager.popMatrix();
     }
 }

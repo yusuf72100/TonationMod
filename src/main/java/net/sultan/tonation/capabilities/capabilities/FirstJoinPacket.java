@@ -37,7 +37,6 @@ public class FirstJoinPacket implements IMessage {
         public IMessage onMessage(FirstJoinPacket message, MessageContext ctx)
         {
             System.out.println("Packet recu serveur, firstjoin = " + message.first_join);
-
             ctx.getServerHandler().player.getServerWorld().addScheduledTask(new ScheduledPacketTask(ctx.getServerHandler().player, message));
             return null;
         }

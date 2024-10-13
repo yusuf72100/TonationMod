@@ -30,7 +30,7 @@ public class FirstJoin implements IFirstJoin{
     }
 
     @Override
-    public void sync(EntityPlayer player) //sync data between player and server
+    public void sync(EntityPlayer player)       //sync data between player and server
     {
         FirstJoinPacket packet = new FirstJoinPacket(first_join);
 

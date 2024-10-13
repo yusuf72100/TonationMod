@@ -16,12 +16,14 @@ import net.sultan.tonation.capabilities.capabilities.FirstJoinStorage;
 import net.sultan.tonation.capabilities.capabilities.IFirstJoin;
 import net.sultan.tonation.capabilities.capabilities.WelcomeOverlayPacket;
 
+import javax.annotation.Nonnull;
+
 @Mod.EventBusSubscriber
 public class EventHandler {
     public static final ResourceLocation FIRST_JOIN_CAP = new ResourceLocation(tonation.MODID, "first_join_cap");
 
     @SubscribeEvent @SideOnly(Side.SERVER)
-    public void attachCapability(AttachCapabilitiesEvent<Entity> event)
+    public void attachCapability(@Nonnull AttachCapabilitiesEvent<Entity> event)
     {
         if (!(event.getObject() instanceof EntityPlayer)) return;
         tonation.LOGGER.info("attach marche bien! ");
@@ -34,7 +36,6 @@ public class EventHandler {
         IFirstJoin fj = event.player.getCapability(FirstJoinStorage.FIRST_JOIN_CAP, null);
         tonation.LOGGER.info("Deconnection! ");
         fj.sync(event.player);
-
     }
 
     @SubscribeEvent @SideOnly(Side.SERVER)
@@ -52,7 +53,8 @@ public class EventHandler {
         IFirstJoin fj = event.player.getCapability(FirstJoinStorage.FIRST_JOIN_CAP, null);
         fj.sync(event.player);
 
-        if(fj.isFirstConnection() == 1){
+        if(fj.isFirstConnection() == 1)
+        {
             String message = String.format("Here is your first connection!");
             event.player.sendMessage(new TextComponentString(message));
             //affichage du gui WelcomeOverlay au client
