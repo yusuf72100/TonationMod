@@ -71,8 +71,8 @@ public class EventHandler {
     @SubscribeEvent @SideOnly(Side.SERVER)
     public static void onPlayerTick(net.minecraftforge.fml.common.gameevent.TickEvent.PlayerTickEvent event)
     {
-        // N'exécute que toutes les 15 secondes (300 ticks)
-        if (event.player.ticksExisted % 300 != 0) {
+        // N'exécute que toutes les 30 secondes (600 ticks)
+        if (event.player.ticksExisted % 600 != 0) {
             return;
         }
 
@@ -155,5 +155,4 @@ public class EventHandler {
             }
         }
     }
-
 }
