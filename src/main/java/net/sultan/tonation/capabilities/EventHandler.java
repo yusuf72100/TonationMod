@@ -15,7 +15,6 @@ import net.minecraftforge.fml.common.gameevent.PlayerEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import net.sultan.tonation.capabilities.capabilities.*;
-
 import javax.annotation.Nonnull;
 import java.util.List;
 
@@ -28,7 +27,7 @@ public class EventHandler {
     public static void attachCapability(@Nonnull AttachCapabilitiesEvent<Entity> event)
     {
         if (!(event.getObject() instanceof EntityPlayer)) return;
-        tonation.LOGGER.info("attach marche bien! ");
+        tonation.LOGGER.info("attach working! ");
         event.addCapability(FIRST_JOIN_CAP, new FirstJoinProvider((EntityPlayer)event.getObject()));
         event.addCapability(MOB_NEARBY_CAP, new MobNearbyProvider((EntityPlayer)event.getObject()));
     }
@@ -40,7 +39,7 @@ public class EventHandler {
         fj.sync(event.player);
         IMobNearby cap = event.player.getCapability(MobNearbyStorage.MOB_NEARBY_CAP, null);
         cap.sync(event.player);
-        tonation.LOGGER.info("Deconnection!");
+        tonation.LOGGER.info("Logout!");
     }
 
     @SubscribeEvent @SideOnly(Side.SERVER)
