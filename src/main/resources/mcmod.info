@@ -1,7 +1,7 @@
 [
 {
   "modid": "tonation",
-  "name": "Tonation Mod",
+  "name": "TonationMod",
   "description": "Mod tonation",
   "version": "${version}",
   "mcversion": "${mcversion}",

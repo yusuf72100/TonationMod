@@ -1,7 +1,6 @@
 package net.sultan.tonation.capabilities;
 
 import net.minecraft.client.gui.GuiScreen;
-import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.util.ResourceLocation;
 
 public class WelcomeOverlay extends GuiScreen {
@@ -11,25 +10,19 @@ public class WelcomeOverlay extends GuiScreen {
     private int guiLeft;
     private int guiTop;
 
+    @Override
     public void initGui() {
         guiLeft = (this.width - this.xSize) / 2;
         guiTop = (this.height - this.ySize) / 2;
     }
 
+    @Override
     public void drawScreen(int mouseX, int mouseY, float partialTicks) {
+        initGui();
         // Afficher le fond par défaut
-        //drawBackgroundImage();
         drawDefaultBackground();
         mc.getTextureManager().bindTexture(background);
         drawModalRectWithCustomSizedTexture(guiLeft, guiTop, 0, 0, xSize, ySize, xSize, ySize);
         super.drawScreen(mouseX, mouseY, partialTicks);
-    }
-
-    public void drawBackgroundImage() {
-        GlStateManager.pushMatrix();
-        GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
-        mc.getTextureManager().bindTexture(background);
-        drawTexturedModalRect(guiLeft, guiTop, 0, 0, xSize, ySize);
-        GlStateManager.popMatrix();
     }
 }

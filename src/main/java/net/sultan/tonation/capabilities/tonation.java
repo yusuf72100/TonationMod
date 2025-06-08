@@ -1,5 +1,6 @@
 package net.sultan.tonation.capabilities;
 
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
 import net.minecraftforge.fml.common.SidedProxy;
@@ -22,24 +23,32 @@ public class tonation
     public static Logger LOGGER = LogManager.getLogger();
     public static SimpleNetworkWrapper network;
 
-    @SidedProxy(clientSide = "net.sultan.tonation.capabilities.CommonProxy", serverSide = "net.sultan.tonation.capabilities.CommonProxy")
+    @SidedProxy(clientSide = "net.sultan.tonation.capabilities.ClientProxy", serverSide = "net.sultan.tonation.capabilities.CommonProxy")
     public static CommonProxy commonProxy;
 
     @EventHandler
     public void preInit(FMLPreInitializationEvent event)
     {
+        commonProxy.Init();
+        LOGGER.info("TonationMod initialized");
+
         //Register network max range 255
         network = NetworkRegistry.INSTANCE.newSimpleChannel("assets");
 
+        int id = 0;
         //Server processing
-        network.registerMessage(FirstJoinPacket.ServerHandler.class, FirstJoinPacket.class, 1, Side.SERVER);
-        network.registerMessage(WelcomeOverlayPacket.ServerHandler.class, WelcomeOverlayPacket.class, 1, Side.SERVER);
+        network.registerMessage(FirstJoinPacket.ServerHandler.class, FirstJoinPacket.class, id++, Side.SERVER);
+        network.registerMessage(WelcomeOverlayPacket.ServerHandler.class, WelcomeOverlayPacket.class, id++, Side.SERVER);
+        network.registerMessage(MobNearbyPacket.ServerHandler.class, MobNearbyPacket.class, id++, Side.SERVER);
+        network.registerMessage(EmotionOverlayPacket.ServerHandler.class, EmotionOverlayPacket.class, id++, Side.SERVER);
 
         if(event.getSide() != Side.SERVER)
         {
             //Client processing
-            network.registerMessage(FirstJoinPacket.ClientHandler.class, FirstJoinPacket.class, 0, Side.CLIENT);
-            network.registerMessage(WelcomeOverlayPacket.ClientHandler.class, WelcomeOverlayPacket.class, 0, Side.CLIENT);
+            network.registerMessage(FirstJoinPacket.ClientHandler.class, FirstJoinPacket.class, id++, Side.CLIENT);
+            network.registerMessage(WelcomeOverlayPacket.ClientHandler.class, WelcomeOverlayPacket.class, id++, Side.CLIENT);
+            network.registerMessage(MobNearbyPacket.ClientHandler.class, MobNearbyPacket.class, id++, Side.CLIENT);
+            network.registerMessage(EmotionOverlayPacket.ClientHandler.class, EmotionOverlayPacket.class, id++, Side.CLIENT);
         }
         LOGGER = event.getModLog();
     }
@@ -47,7 +56,6 @@ public class tonation
     @EventHandler
     public void Init(FMLInitializationEvent event)
     {
-        commonProxy.Init();
         instance = this;
     }
 }
