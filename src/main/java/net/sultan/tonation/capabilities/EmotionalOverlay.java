@@ -47,7 +47,7 @@ public class EmotionalOverlay {
         // Bottom right corner
         int width = 16; // Largeur
         int height = 16; // Hauteur
-        int x = screenWidth - width - 10; // Position X (à droite avec marge de 10)
+        int x = screenWidth - width - 30; // Position X (à droite avec marge de 10)
         int y = screenHeight - height - 10; // Position Y (en bas avec marge de 10)
 
         // Draw image
