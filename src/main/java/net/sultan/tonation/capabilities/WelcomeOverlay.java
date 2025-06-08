@@ -18,7 +18,6 @@ public class WelcomeOverlay extends GuiScreen {
 
     @Override
     public void drawScreen(int mouseX, int mouseY, float partialTicks) {
-        initGui();
         // Afficher le fond par défaut
         drawDefaultBackground();
         mc.getTextureManager().bindTexture(background);

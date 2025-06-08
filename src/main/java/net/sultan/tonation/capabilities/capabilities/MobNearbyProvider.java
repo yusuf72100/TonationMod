@@ -39,7 +39,7 @@ public class MobNearbyProvider implements ICapabilityProvider, INBTSerializable<
 
     public MobNearbyProvider(EntityPlayer player)
     {
-        this.mobNearby  = new MobNearby();
+        this.mobNearby  = new MobNearby(50);
         this.player = player;
     }
 }

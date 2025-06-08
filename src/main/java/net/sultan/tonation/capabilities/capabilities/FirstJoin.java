@@ -36,13 +36,11 @@ public class FirstJoin implements IFirstJoin{
 
         if(!player.world.isRemote)
         {
-            System.out.println("sync, isRemote ? : no, send to player");
             EntityPlayerMP playerMP = (EntityPlayerMP)player;
             tonation.network.sendTo(packet, playerMP);
         }
         else
         {
-            System.out.println("sync, isRemote ? : yes, send to server");
             tonation.network.sendToServer(packet);
         }
     }

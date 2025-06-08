@@ -7,8 +7,12 @@ import net.sultan.tonation.capabilities.tonation;
 public class MobNearby implements IMobNearby {
     private int timer;
 
+    public MobNearby(int timer) {
+        this.timer = timer;
+    }
+
     public MobNearby() {
-        this.timer = 0;
+
     }
 
     @Override
@@ -27,13 +31,11 @@ public class MobNearby implements IMobNearby {
 
         if(!player.world.isRemote)
         {
-            System.out.println("sync, isRemote ? : no, send to player");
             EntityPlayerMP playerMP = (EntityPlayerMP)player;
             tonation.network.sendTo(packet, playerMP);
         }
         else
         {
-            System.out.println("sync, isRemote ? : yes, send to server");
             tonation.network.sendToServer(packet);
         }
     }
