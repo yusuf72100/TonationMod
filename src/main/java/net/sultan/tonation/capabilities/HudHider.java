@@ -6,7 +6,7 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.relauncher.Side;
 
 @Mod.EventBusSubscriber(Side.CLIENT)
-public class HealthHider {
+public class HudHider {
 
     @SubscribeEvent
     public static void onRenderOverlay(RenderGameOverlayEvent.Pre event) {
@@ -21,7 +21,7 @@ public class HealthHider {
                 //event.setCanceled(true); // Enlève les points d'armure
                 break;
             case AIR:
-                //event.setCanceled(true); // Enlève les bulles d'air
+                event.setCanceled(true); // Enlève les bulles d'air
                 break;
             case EXPERIENCE:
                 event.setCanceled(true); // Enlève la barre d'XP
