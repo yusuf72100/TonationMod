@@ -181,7 +181,8 @@ public class FirstPersonBodyRenderer {
 
         GlStateManager.pushAttrib();
         GlStateManager.pushMatrix();
-        GlStateManager.disableBlend();
+        GlStateManager.enableDepth();
+        GlStateManager.depthMask(true);
         GlStateManager.color(1.0f, 1.0f, 1.0f, 1.0f);
 
         double px = player.lastTickPosX + (player.posX - player.lastTickPosX) * partialTicks;
@@ -220,7 +221,6 @@ public class FirstPersonBodyRenderer {
             e.printStackTrace();
         }
 
-        GlStateManager.enableDepth();
         GlStateManager.popMatrix();
         GlStateManager.popAttrib();
     }
