@@ -26,7 +26,7 @@ public class HudHider {
             case EXPERIENCE:
                 event.setCanceled(true); // Enlève la barre d'XP
                 break;
-            // Ajoute d'autres éléments si nécessaire
+            // Add other elements if necessary
         }
     }
 }
