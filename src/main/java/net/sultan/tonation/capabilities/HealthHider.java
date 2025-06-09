@@ -15,7 +15,7 @@ public class HealthHider {
                 event.setCanceled(true); // Enlève les cœurs de vie
                 break;
             case FOOD:
-                //event.setCanceled(true); // Enlève la barre de faim
+                event.setCanceled(true); // Enlève la barre de faim
                 break;
             case ARMOR:
                 //event.setCanceled(true); // Enlève les points d'armure
