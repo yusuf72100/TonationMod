@@ -2,6 +2,7 @@ package net.sultan.tonation.capabilities;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
+import net.minecraft.client.gui.GuiIngameMenu;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.monster.EntityMob;
@@ -9,6 +10,7 @@ import net.minecraft.entity.monster.IMob;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.world.GameType;
 import net.minecraftforge.client.event.RenderPlayerEvent;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
@@ -73,7 +75,7 @@ public class EventHandler {
     @SubscribeEvent @SideOnly(Side.SERVER)
     public static void onPlayerTick(net.minecraftforge.fml.common.gameevent.TickEvent.PlayerTickEvent event)
     {
-        // N'exécute que toutes les 30 secondes (600 ticks)
+        // Executing every 30 secondes (600 ticks)
         if (event.player.ticksExisted % 600 != 0) {
             return;
         }
@@ -86,53 +88,55 @@ public class EventHandler {
             return;
         }
 
-        double radius = 10.0;
-        // friendly mobs
-        List<EntityLivingBase> friendlyEntities = event.player.world.getEntitiesWithinAABB(
-                EntityLivingBase.class,
-                event.player.getEntityBoundingBox().grow(radius),
-                entity ->
-                        !(entity instanceof IMob) &&    // Exclut les mobs hostiles
-                        !(entity instanceof EntityMob)  // Exclut aussi EntityMob
-        );
+        // Emotional Overlay
+        if (!isPlayerInCreative(event.player)) {        // do nothing in creative mode
 
-        List<EntityLivingBase> hostileEntities = event.player.world.getEntitiesWithinAABB(
-                EntityLivingBase.class,
-                event.player.getEntityBoundingBox().grow(radius),
-                entity ->
-                        (entity instanceof IMob) ||    // Inclut les mobs hostiles
-                        (entity instanceof EntityMob)  // Inclut aussi EntityMob
-        );
+            double radius = 10.0;
+            // friendly mobs
+            List<EntityLivingBase> friendlyEntities = event.player.world.getEntitiesWithinAABB(
+                    EntityLivingBase.class,
+                    event.player.getEntityBoundingBox().grow(radius),
+                    entity ->
+                            !(entity instanceof IMob) &&    // Exclut les mobs hostiles
+                            !(entity instanceof EntityMob)  // Exclut aussi EntityMob
+            );
 
-        int friendlyMods = friendlyEntities.size();
-        int hostileMobs = hostileEntities.size();
+            List<EntityLivingBase> hostileEntities = event.player.world.getEntitiesWithinAABB(
+                    EntityLivingBase.class,
+                    event.player.getEntityBoundingBox().grow(radius),
+                    entity ->
+                            (entity instanceof IMob) ||    // Inclut les mobs hostiles
+                            (entity instanceof EntityMob)  // Inclut aussi EntityMob
+            );
 
-        if (friendlyMods > hostileMobs) {
-            tonation.LOGGER.info(cap.getTimer() + " mob trouvé");
-            if (cap.getTimer() < 100) {
-                cap.setTimer(cap.getTimer() + 5);
-            }
-        } else {
-            tonation.LOGGER.info(cap.getTimer() + " pas de mob trouvé");
-            if (cap.getTimer() > 0) {
-                cap.setTimer(cap.getTimer() - 5);
-            }
-        }
+            int friendlyMods = friendlyEntities.size();
+            int hostileMobs = hostileEntities.size();
 
-        // Maintenant que le timer est à jour, on peut envoyer les infos au client
-        if (event.player instanceof EntityPlayerMP) {
-            EntityPlayerMP playerMP = (EntityPlayerMP) event.player;
-
-            // Sync capability
-            tonation.network.sendTo(new MobNearbyPacket(cap.getTimer()), playerMP);
-
-            // managing
-            if (cap.getTimer() >= 80 && cap.getTimer() <= 100) {
-                tonation.network.sendTo(new EmotionOverlayPacket("high"), playerMP);
-            } else if (cap.getTimer() >= 40 && cap.getTimer() < 80) {
-                tonation.network.sendTo(new EmotionOverlayPacket("medium"), playerMP);
+            if (friendlyMods > hostileMobs) {
+                if (cap.getTimer() < 100) {
+                    cap.setTimer(cap.getTimer() + 5);
+                }
             } else {
-                tonation.network.sendTo(new EmotionOverlayPacket("low"), playerMP);
+                if (cap.getTimer() > 0) {
+                    cap.setTimer(cap.getTimer() - 5);
+                }
+            }
+
+            // Sending datas to client
+            if (event.player instanceof EntityPlayerMP) {
+                EntityPlayerMP playerMP = (EntityPlayerMP) event.player;
+
+                // Sync capability
+                tonation.network.sendTo(new MobNearbyPacket(cap.getTimer()), playerMP);
+
+                // managing overlay
+                if (cap.getTimer() >= 80 && cap.getTimer() <= 100) {
+                    tonation.network.sendTo(new EmotionOverlayPacket("high"), playerMP);
+                } else if (cap.getTimer() >= 40 && cap.getTimer() < 80) {
+                    tonation.network.sendTo(new EmotionOverlayPacket("medium"), playerMP);
+                } else {
+                    tonation.network.sendTo(new EmotionOverlayPacket("low"), playerMP);
+                }
             }
         }
     }
@@ -156,5 +160,15 @@ public class EventHandler {
                 cap.setTimer((int) (cap.getTimer() - (damage * 2)));
             }
         }
+    }
+
+    // Check if player is in creative mode
+    public static boolean isPlayerInCreative(EntityPlayer player) {
+        if (player instanceof EntityPlayerMP) {
+            EntityPlayerMP playerMP = (EntityPlayerMP) player;
+            GameType gameType = playerMP.interactionManager.getGameType();
+            return gameType == GameType.CREATIVE;
+        }
+        return false;
     }
 }
