@@ -89,29 +89,28 @@ public class EventHandler {
         }
 
         // Emotional Overlay
+        double radius = 10.0;
+        // friendly mobs
+        List<EntityLivingBase> friendlyEntities = event.player.world.getEntitiesWithinAABB(
+                EntityLivingBase.class,
+                event.player.getEntityBoundingBox().grow(radius),
+                entity ->
+                        !(entity instanceof IMob) &&    // Exclut les mobs hostiles
+                        !(entity instanceof EntityMob)  // Exclut aussi EntityMob
+        );
+
+        List<EntityLivingBase> hostileEntities = event.player.world.getEntitiesWithinAABB(
+                EntityLivingBase.class,
+                event.player.getEntityBoundingBox().grow(radius),
+                entity ->
+                        (entity instanceof IMob) ||    // Inclut les mobs hostiles
+                        (entity instanceof EntityMob)  // Inclut aussi EntityMob
+        );
+
+        int friendlyMods = friendlyEntities.size();
+        int hostileMobs = hostileEntities.size();
+
         if (!isPlayerInCreative(event.player)) {        // do nothing in creative mode
-
-            double radius = 10.0;
-            // friendly mobs
-            List<EntityLivingBase> friendlyEntities = event.player.world.getEntitiesWithinAABB(
-                    EntityLivingBase.class,
-                    event.player.getEntityBoundingBox().grow(radius),
-                    entity ->
-                            !(entity instanceof IMob) &&    // Exclut les mobs hostiles
-                            !(entity instanceof EntityMob)  // Exclut aussi EntityMob
-            );
-
-            List<EntityLivingBase> hostileEntities = event.player.world.getEntitiesWithinAABB(
-                    EntityLivingBase.class,
-                    event.player.getEntityBoundingBox().grow(radius),
-                    entity ->
-                            (entity instanceof IMob) ||    // Inclut les mobs hostiles
-                            (entity instanceof EntityMob)  // Inclut aussi EntityMob
-            );
-
-            int friendlyMods = friendlyEntities.size();
-            int hostileMobs = hostileEntities.size();
-
             if (friendlyMods > hostileMobs) {
                 if (cap.getTimer() < 100) {
                     cap.setTimer(cap.getTimer() + 5);
@@ -121,22 +120,22 @@ public class EventHandler {
                     cap.setTimer(cap.getTimer() - 5);
                 }
             }
+        }
 
-            // Sending datas to client
-            if (event.player instanceof EntityPlayerMP) {
-                EntityPlayerMP playerMP = (EntityPlayerMP) event.player;
+        // Sending datas to client
+        if (event.player instanceof EntityPlayerMP) {
+            EntityPlayerMP playerMP = (EntityPlayerMP) event.player;
 
-                // Sync capability
-                tonation.network.sendTo(new MobNearbyPacket(cap.getTimer()), playerMP);
+            // Sync capability
+            tonation.network.sendTo(new MobNearbyPacket(cap.getTimer()), playerMP);
 
-                // managing overlay
-                if (cap.getTimer() >= 80 && cap.getTimer() <= 100) {
-                    tonation.network.sendTo(new EmotionOverlayPacket("high"), playerMP);
-                } else if (cap.getTimer() >= 40 && cap.getTimer() < 80) {
-                    tonation.network.sendTo(new EmotionOverlayPacket("medium"), playerMP);
-                } else {
-                    tonation.network.sendTo(new EmotionOverlayPacket("low"), playerMP);
-                }
+            // managing overlay
+            if (cap.getTimer() >= 80 && cap.getTimer() <= 100) {
+                tonation.network.sendTo(new EmotionOverlayPacket("high"), playerMP);
+            } else if (cap.getTimer() >= 40 && cap.getTimer() < 80) {
+                tonation.network.sendTo(new EmotionOverlayPacket("medium"), playerMP);
+            } else {
+                tonation.network.sendTo(new EmotionOverlayPacket("low"), playerMP);
             }
         }
     }
