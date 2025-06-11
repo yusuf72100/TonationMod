@@ -204,7 +204,6 @@ public class FirstPersonBodyRenderer {
                 setArmorHeadVisibility(renderPlayer, !oldHeadwearHidden);
             }
 
-            // **Désactivation lumière pour ne pas polluer la suite**
             RenderHelper.disableStandardItemLighting();
             GlStateManager.disableRescaleNormal();
             GlStateManager.disableLighting();
