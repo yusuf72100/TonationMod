@@ -4,6 +4,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.model.ModelBiped;
 import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.renderer.entity.Render;
 import net.minecraft.client.renderer.entity.RenderLivingBase;
@@ -11,11 +12,14 @@ import net.minecraft.client.renderer.entity.RenderPlayer;
 import net.minecraft.client.renderer.entity.layers.LayerArmorBase;
 import net.minecraft.client.renderer.entity.layers.LayerRenderer;
 import net.minecraft.inventory.EntityEquipmentSlot;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.MathHelper;
 import net.minecraftforge.client.event.*;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import org.lwjgl.opengl.GL11;
 
 import java.lang.reflect.Field;
 import java.util.List;
@@ -43,7 +47,6 @@ public class FirstPersonBodyRenderer {
             layersField.setAccessible(true);
             fieldInitialized = true;
         } catch (Exception e) {
-            System.err.println("Erreur lors de l'initialisation de la reflection: " + e.getMessage());
             fieldInitialized = false;
         }
     }
@@ -164,18 +167,23 @@ public class FirstPersonBodyRenderer {
         GlStateManager.pushAttrib();
 
         try {
+            // Préparation OpenGL
             GlStateManager.enableDepth();
             GlStateManager.depthMask(true);
-            GlStateManager.disableBlend();
             GlStateManager.enableAlpha();
-            GlStateManager.alphaFunc(516, 0.1F);
-            GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
+            GlStateManager.alphaFunc(GL11.GL_GREATER, 0.1F);
+            GlStateManager.enableBlend();
+            GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 
-            // **Activation de la lumière pour shaders**
-            RenderHelper.enableStandardItemLighting();
+            // Éclairage correct pour shaders
             GlStateManager.enableLighting();
+            RenderHelper.enableStandardItemLighting();
             GlStateManager.enableRescaleNormal();
 
+            // Active la lightmap pour les shaders
+            mc.entityRenderer.enableLightmap();
+
+            // Position de rendu interpolée
             double px = player.lastTickPosX + (player.posX - player.lastTickPosX) * partialTicks;
             double py = player.lastTickPosY + (player.posY - player.lastTickPosY) * partialTicks;
             double pz = player.lastTickPosZ + (player.posZ - player.lastTickPosZ) * partialTicks;
@@ -186,6 +194,7 @@ public class FirstPersonBodyRenderer {
                     pz - mc.getRenderManager().viewerPosZ
             );
 
+            // Rendu du joueur sans la tête
             Render<?> render = mc.getRenderManager().getEntityRenderObject(player);
             if (render instanceof RenderPlayer) {
                 RenderPlayer renderPlayer = (RenderPlayer) render;
@@ -204,23 +213,22 @@ public class FirstPersonBodyRenderer {
                 setArmorHeadVisibility(renderPlayer, !oldHeadwearHidden);
             }
 
-            RenderHelper.disableStandardItemLighting();
+            // Nettoyage post rendu
+            mc.entityRenderer.disableLightmap();
             GlStateManager.disableRescaleNormal();
-            GlStateManager.disableLighting();
 
-        } catch (OutOfMemoryError e) {
-            e.printStackTrace();
         } catch (Exception e) {
-            // silence exceptions
+            // silent fail
         } finally {
-            GlStateManager.popMatrix();
             GlStateManager.popAttrib();
+            GlStateManager.popMatrix();
         }
     }
 
     @SubscribeEvent
     public static void onCameraSetup(EntityViewRenderEvent.CameraSetup event) {
         Minecraft mc = Minecraft.getMinecraft();
+
         if (mc.gameSettings.thirdPersonView == 0) {
             if (mc.player != null && mc.player.isSneaking()) {
                 GlStateManager.translate(0, -0.4f, 0.1f);
