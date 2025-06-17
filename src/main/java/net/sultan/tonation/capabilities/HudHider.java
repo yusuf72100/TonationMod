@@ -12,19 +12,19 @@ public class HudHider {
     public static void onRenderOverlay(RenderGameOverlayEvent.Pre event) {
         switch (event.getType()) {
             case HEALTH:
-                event.setCanceled(true); // Enlève les cœurs de vie
+                event.setCanceled(true);        // remove health bar
                 break;
             case FOOD:
-                event.setCanceled(true); // Enlève la barre de faim
+                event.setCanceled(true);        // remove food bar
                 break;
             case ARMOR:
-                //event.setCanceled(true); // Enlève les points d'armure
+                event.setCanceled(true);        // remove armor bar
                 break;
             case AIR:
-                event.setCanceled(true); // Enlève les bulles d'air
+                event.setCanceled(true);        // remove air bar
                 break;
             case EXPERIENCE:
-                event.setCanceled(true); // Enlève la barre d'XP
+                event.setCanceled(true);        // remove experience bar
                 break;
             // Add other elements if necessary
         }

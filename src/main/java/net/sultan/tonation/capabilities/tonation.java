@@ -1,6 +1,5 @@
 package net.sultan.tonation.capabilities;
 
-import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
 import net.minecraftforge.fml.common.SidedProxy;
@@ -41,6 +40,9 @@ public class tonation
         network.registerMessage(WelcomeOverlayPacket.ServerHandler.class, WelcomeOverlayPacket.class, id++, Side.SERVER);
         network.registerMessage(MobNearbyPacket.ServerHandler.class, MobNearbyPacket.class, id++, Side.SERVER);
         network.registerMessage(EmotionOverlayPacket.ServerHandler.class, EmotionOverlayPacket.class, id++, Side.SERVER);
+        network.registerMessage(ShareItemPacket.Handler.class, ShareItemPacket.class, id++, Side.SERVER);
+        network.registerMessage(RequestSharedItemPacket.Handler.class, RequestSharedItemPacket.class, id++, Side.SERVER);
+        network.registerMessage(TriggerAnimationPacket.Handler.class, TriggerAnimationPacket.class, id++, Side.SERVER);
 
         if(event.getSide() != Side.SERVER)
         {
@@ -49,6 +51,7 @@ public class tonation
             network.registerMessage(WelcomeOverlayPacket.ClientHandler.class, WelcomeOverlayPacket.class, id++, Side.CLIENT);
             network.registerMessage(MobNearbyPacket.ClientHandler.class, MobNearbyPacket.class, id++, Side.CLIENT);
             network.registerMessage(EmotionOverlayPacket.ClientHandler.class, EmotionOverlayPacket.class, id++, Side.CLIENT);
+            network.registerMessage(TriggerAnimationPacket.Handler.class, TriggerAnimationPacket.class, id++, Side.CLIENT);
         }
         LOGGER = event.getModLog();
     }

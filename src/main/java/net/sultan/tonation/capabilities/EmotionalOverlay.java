@@ -45,10 +45,10 @@ public class EmotionalOverlay {
         GlStateManager.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
 
         // Bottom right corner
-        int width = 16; // Largeur
-        int height = 16; // Hauteur
-        int x = screenWidth - width - 30; // Position X (à droite avec marge de 10)
-        int y = screenHeight - height - 10; // Position Y (en bas avec marge de 10)
+        int width = 16;
+        int height = 16;
+        int x = screenWidth - width - 30;
+        int y = screenHeight - height - 10;
 
         // Draw image
         Gui.drawModalRectWithCustomSizedTexture(x, y, 0, 0, width, height, width, height);
